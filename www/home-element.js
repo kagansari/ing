@@ -1,10 +1,7 @@
-import {LitElement, html, css} from 'lit';
+import {LitElement, html} from 'lit';
+import './pages/employees-list-element.js';
 
-import { LitElement, html, css } from 'lit';
-import { Router } from '@vaadin/router';
-import "./pages/employees-list-element.js";
-
-class HomeElement extends LitElement {
+export class HomeElement extends LitElement {
   render() {
     return html`<employees-list-element></employees-list-element>`;
   }

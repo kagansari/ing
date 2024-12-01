@@ -1,8 +1,7 @@
-import {LitElement, html, css} from 'lit';
+import {msg, str, updateWhenLocaleChanges} from '@lit/localize';
 import {Router} from '@vaadin/router';
-import {msg} from '@lit/localize';
+import {LitElement, css, html} from 'lit';
 import {connect} from 'pwa-helpers';
-import store from '../store';
 import '../components/confirm-modal.js';
 import {
   deleteIcon,
@@ -10,11 +9,14 @@ import {
   gridIcon,
   leftIcon,
   listIcon,
+  mailIcon,
+  phoneIcon,
   rightIcon,
 } from '../components/icons.js';
+import store, {deleteEmployee} from '../store';
 import globalStyles from '../style.js';
 
-class EmployeesListElement extends connect(store)(LitElement) {
+export class EmployeesListElement extends connect(store)(LitElement) {
   static get styles() {
     return [
       globalStyles,
@@ -63,6 +65,7 @@ class EmployeesListElement extends connect(store)(LitElement) {
           font-weight: 500;
           padding: 20px;
           white-space: nowrap;
+          text-align: left;
         }
         table td {
           padding: 20px;
@@ -85,6 +88,84 @@ class EmployeesListElement extends connect(store)(LitElement) {
           grid-template-columns: 1fr;
           gap: 32px;
         }
+        @media (min-width: 600px) {
+          .card-container {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+        @media (min-width: 1024px) {
+          .card-container {
+            grid-template-columns: repeat(3, 1fr);
+          }
+        }
+        .card-container .card {
+          background-color: white;
+          border-radius: 16px;
+        }
+        .card-container .card .section {
+          display: flex;
+          flex-direction: column;
+          padding: 16px;
+          border-bottom: 2px solid var(--grey-bg);
+        }
+        .card-container .card h3 {
+          margin: 0;
+          font-weight: normal;
+        }
+        .card-container .card .col {
+          /* width: 50%; */
+          display: flex;
+          flex-direction: column;
+          flex-grow: 1;
+        }
+        .card-container .card .label {
+          font-size: 12px;
+          color: var(--ing-orange);
+          opacity: 0.75;
+        }
+        .card-container .card .light {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 14px;
+          color: var(--text-secondary);
+        }
+        .card-container .card svg {
+          width: 24px;
+          opacity: 0.75;
+        }
+        .card-container .card path {
+          fill: var(--ing-orange);
+        }
+        .card-container .card .actions {
+          display: flex;
+          justify-content: flex-end;
+          gap: 16px;
+          padding: 16px;
+        }
+        .pagination {
+          display: flex;
+          justify-content: center;
+          margin-top: 16px;
+        }
+        .pagination .pages button {
+          width: 36px;
+          height: 36px;
+          color: var(--text-secondary);
+          background-color: transparent;
+          border: 0;
+          font-size: 20px;
+          border-radius: 50%;
+          transition: background-color 0.3s ease;
+        }
+        .pagination .pages button:hover {
+          background-color: var(--dark-grey-bg);
+          cursor: pointer;
+        }
+        .pagination .pages button.active {
+          color: white;
+          background-color: var(--ing-orange);
+        }
       `,
     ];
   }
@@ -102,6 +183,7 @@ class EmployeesListElement extends connect(store)(LitElement) {
 
   constructor() {
     super();
+    updateWhenLocaleChanges(this);
     this.employees = [];
     this.searchQuery = '';
     this.currentPage = 1;
@@ -136,13 +218,23 @@ class EmployeesListElement extends connect(store)(LitElement) {
     return paginatedEmployees;
   }
 
+  stateChanged(state) {
+    this.employees = state.employees;
+  }
+
   render() {
+    const deletingEmployeeName = `${this.employeeToDelete?.firstName} ${this.employeeToDelete?.lastName}`;
     return html`
       <div class="container">
         <div class="controls">
           <h2>${msg('Employee List')}</h2>
           <span class="grow"></span>
-          <input type="text" placeholder="Search..." @input=${this._onSearch} />
+          <input
+            data-test-id="search-input"
+            type="text"
+            placeholder=${msg('Search...')}
+            @input=${this._onSearch}
+          />
 
           <div class="list-grid-radio">
             <button
@@ -169,6 +261,7 @@ class EmployeesListElement extends connect(store)(LitElement) {
           : this._renderCard(this._paginatedEmployees)}
         <div class="pagination">
           <button
+            data-test-id="prev-page-button"
             class="orange"
             @click=${this._prevPage}
             ?disabled=${this.currentPage === 1}
@@ -188,6 +281,7 @@ class EmployeesListElement extends connect(store)(LitElement) {
             })}
           </span>
           <button
+            data-test-id="next-page-button"
             class="orange"
             @click=${this._nextPage}
             ?disabled=${this.currentPage * this.itemsPerPage >=
@@ -197,11 +291,72 @@ class EmployeesListElement extends connect(store)(LitElement) {
           </button>
         </div>
       </div>
+
+      <confirm-modal
+        .isOpen=${!!this.employeeToDelete}
+        .employee=${this.employeeToDelete}
+        @confirm=${this._handleDelete}
+        @close=${this._handleModalClosed}
+      >
+        ${msg(
+          str`Selected employee record of"${deletingEmployeeName}" will be deleted`
+        )}
+      </confirm-modal>
     `;
   }
 
   _renderCard(employees) {
-    return html` <div class="card-container"></div> `;
+    return html`
+      <div class="card-container">
+        ${employees.map(
+          (employee) => html`
+            <div class="card">
+              <div class="section">
+                <h3>${employee.firstName} ${employee.lastName}</h3>
+              </div>
+              <div class="section">
+                <span class="light">${phoneIcon} ${employee.phone}</span>
+                <span class="light">${mailIcon} ${employee.email}</span>
+                <br />
+                <div style="display: flex; flex-wrap: nowrap;">
+                  <div class="col">
+                    <span class="label">${msg('Date of Employment')}</span>
+                    <span class="light">${employee.dateOfEmployment}</span>
+                    <span class="label">${msg('Date of Birth')}</span>
+                    <span class="light">${employee.dateOfBirth}</span>
+                  </div>
+                  <div class="col">
+                    <span class="label">${msg('Department')}</span>
+                    <span class="light"
+                      >${this._renderEmployeeDepartment(
+                        employee.department
+                      )}</span
+                    >
+                    <span class="label">${msg('Position')}</span>
+                    <span class="light">${employee.position}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="actions">
+                <button
+                  class="orange"
+                  @click=${() => this._editEmployee(employee)}
+                >
+                  ${editIcon}
+                </button>
+                <button
+                  class="orange"
+                  data-test-id="delete-button"
+                  @click=${() => this._openModal(employee)}
+                >
+                  ${deleteIcon}
+                </button>
+              </div>
+            </div>
+          `
+        )}
+      </div>
+    `;
   }
 
   _renderTable(employees) {
@@ -213,15 +368,15 @@ class EmployeesListElement extends connect(store)(LitElement) {
               <th>
                 <input type="checkbox" />
               </th>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th class="center">Date of Employment</th>
-              <th class="center">Date of Birth</th>
-              <th class="center">Phone</th>
-              <th class="center">Email</th>
-              <th class="center">Department</th>
-              <th class="center">Position</th>
-              <th class="center">Actions</th>
+              <th>${msg('First Name')}</th>
+              <th>${msg('Last Name')}</th>
+              <th class="center">${msg('Date of Employment')}</th>
+              <th class="center">${msg('Date of Birth')}</th>
+              <th class="center">${msg('Phone')}</th>
+              <th class="center">${msg('Email')}</th>
+              <th class="center">${msg('Department')}</th>
+              <th class="center">${msg('Position')}</th>
+              <th class="center">${msg('Actions')}</th>
             </tr>
           </thead>
           <tbody>
@@ -237,7 +392,9 @@ class EmployeesListElement extends connect(store)(LitElement) {
                   <td class="light center">${employee.dateOfBirth}</td>
                   <td class="light center">${employee.phone}</td>
                   <td class="light center">${employee.email}</td>
-                  <td class="light center">${employee.department}</td>
+                  <td class="light center">
+                    ${this._renderEmployeeDepartment(employee.department)}
+                  </td>
                   <td class="light center">${employee.position}</td>
                   <td class="center">
                     <button
@@ -248,6 +405,7 @@ class EmployeesListElement extends connect(store)(LitElement) {
                     </button>
                     <button
                       class="orange"
+                      data-test-id="delete-button"
                       @click=${() => this._openModal(employee)}
                     >
                       ${deleteIcon}
@@ -262,8 +420,16 @@ class EmployeesListElement extends connect(store)(LitElement) {
     `;
   }
 
-  _renderEmployeeName(employee) {
-    return html`${employee?.firstName} ${employee?.lastName}`;
+  _renderEmployeeDepartment(department) {
+    switch (department) {
+      case 'Tech':
+        return msg('Tech');
+      case 'Analytics':
+        return msg('Analytics');
+      default:
+        console.error('Unknown department', department);
+        return '';
+    }
   }
 
   _onSearch(event) {
@@ -299,6 +465,19 @@ class EmployeesListElement extends connect(store)(LitElement) {
 
   _handleModalClosed() {
     this.employeeToDelete = null;
+  }
+
+  _handleDelete(event) {
+    const employee = event.detail;
+    store.dispatch(deleteEmployee(employee.id));
+    const fullName = `${employee.firstName} ${employee.lastName}`;
+    window
+      .Toastify?.({
+        text: msg(str`Employee "${fullName}" deleted successfully.`),
+        duration: 3000,
+        close: true,
+      })
+      ?.showToast();
   }
 }
 
