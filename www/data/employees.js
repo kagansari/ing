@@ -1,0 +1,222 @@
+export default [
+  {
+    id: 1,
+    firstName: "Ahmet",
+    lastName: "Sourtimes",
+    dateOfEmployment: "2020-01-15",
+    dateOfBirth: "1990-05-20",
+    phone: "+(90) 532 123 45 67",
+    email: "ahmet.sourtimes@example.com",
+    department: "Tech",
+    position: "Senior"
+  },
+  {
+    id: 2,
+    firstName: "Mehmet",
+    lastName: "Sourtimes",
+    dateOfEmployment: "2019-03-10",
+    dateOfBirth: "1988-11-12",
+    phone: "+(90) 532 234 56 78",
+    email: "mehmet.sourtimes@example.com",
+    department: "Analytics",
+    position: "Medior"
+  },
+  {
+    id: 3,
+    firstName: "Ayse",
+    lastName: "Sourtimes",
+    dateOfEmployment: "2021-07-22",
+    dateOfBirth: "1992-08-15",
+    phone: "+(90) 532 345 67 89",
+    email: "ayse.sourtimes@example.com",
+    department: "Tech",
+    position: "Junior"
+  },
+  {
+    id: 4,
+    firstName: "Fatma",
+    lastName: "Sourtimes",
+    dateOfEmployment: "2018-05-30",
+    dateOfBirth: "1985-02-25",
+    phone: "+(90) 532 456 78 90",
+    email: "fatma.sourtimes@example.com",
+    department: "Analytics",
+    position: "Senior"
+  },
+  {
+    id: 5,
+    firstName: "John",
+    lastName: "Doe",
+    dateOfEmployment: "2017-11-01",
+    dateOfBirth: "1980-12-10",
+    phone: "+(90) 532 567 89 01",
+    email: "john.doe@example.com",
+    department: "Tech",
+    position: "Medior"
+  },
+  {
+    id: 6,
+    firstName: "Jane",
+    lastName: "Smith",
+    dateOfEmployment: "2022-02-14",
+    dateOfBirth: "1995-03-05",
+    phone: "+(90) 532 678 90 12",
+    email: "jane.smith@example.com",
+    department: "Analytics",
+    position: "Junior"
+  },
+  {
+    id: 7,
+    firstName: "Emily",
+    lastName: "Johnson",
+    dateOfEmployment: "2016-08-23",
+    dateOfBirth: "1987-07-19",
+    phone: "+(90) 532 789 01 23",
+    email: "emily.johnson@example.com",
+    department: "Tech",
+    position: "Senior"
+  },
+  {
+    id: 8,
+    firstName: "Michael",
+    lastName: "Brown",
+    dateOfEmployment: "2015-04-12",
+    dateOfBirth: "1979-09-30",
+    phone: "+(90) 532 890 12 34",
+    email: "michael.brown@example.com",
+    department: "Analytics",
+    position: "Medior"
+  },
+  {
+    id: 9,
+    firstName: "Sarah",
+    lastName: "Davis",
+    dateOfEmployment: "2021-10-05",
+    dateOfBirth: "1993-11-22",
+    phone: "+(90) 532 901 23 45",
+    email: "sarah.davis@example.com",
+    department: "Tech",
+    position: "Junior"
+  },
+  {
+    id: 10,
+    firstName: "David",
+    lastName: "Wilson",
+    dateOfEmployment: "2018-06-18",
+    dateOfBirth: "1982-04-15",
+    phone: "+(90) 532 012 34 56",
+    email: "david.wilson@example.com",
+    department: "Analytics",
+    position: "Senior"
+  },
+  {
+    id: 11,
+    firstName: "Laura",
+    lastName: "Martinez",
+    dateOfEmployment: "2019-09-12",
+    dateOfBirth: "1991-03-22",
+    phone: "+(90) 532 123 45 68",
+    email: "laura.martinez@example.com",
+    department: "Tech",
+    position: "Medior"
+  },
+  {
+    id: 12,
+    firstName: "James",
+    lastName: "Garcia",
+    dateOfEmployment: "2018-11-05",
+    dateOfBirth: "1986-06-14",
+    phone: "+(90) 532 234 56 79",
+    email: "james.garcia@example.com",
+    department: "Analytics",
+    position: "Senior"
+  },
+  {
+    id: 13,
+    firstName: "Linda",
+    lastName: "Rodriguez",
+    dateOfEmployment: "2020-04-20",
+    dateOfBirth: "1994-01-30",
+    phone: "+(90) 532 345 67 80",
+    email: "linda.rodriguez@example.com",
+    department: "Tech",
+    position: "Junior"
+  },
+  {
+    id: 14,
+    firstName: "Robert",
+    lastName: "Martinez",
+    dateOfEmployment: "2017-07-18",
+    dateOfBirth: "1983-09-25",
+    phone: "+(90) 532 456 78 91",
+    email: "robert.martinez@example.com",
+    department: "Analytics",
+    position: "Medior"
+  },
+  {
+    id: 15,
+    firstName: "Patricia",
+    lastName: "Hernandez",
+    dateOfEmployment: "2016-12-01",
+    dateOfBirth: "1989-05-10",
+    phone: "+(90) 532 567 89 02",
+    email: "patricia.hernandez@example.com",
+    department: "Tech",
+    position: "Senior"
+  },
+  {
+    id: 16,
+    firstName: "Charles",
+    lastName: "Lopez",
+    dateOfEmployment: "2021-03-15",
+    dateOfBirth: "1992-07-08",
+    phone: "+(90) 532 678 90 13",
+    email: "charles.lopez@example.com",
+    department: "Analytics",
+    position: "Junior"
+  },
+  {
+    id: 17,
+    firstName: "Barbara",
+    lastName: "Gonzalez",
+    dateOfEmployment: "2019-05-25",
+    dateOfBirth: "1984-11-19",
+    phone: "+(90) 532 789 01 24",
+    email: "barbara.gonzalez@example.com",
+    department: "Tech",
+    position: "Medior"
+  },
+  {
+    id: 18,
+    firstName: "Thomas",
+    lastName: "Perez",
+    dateOfEmployment: "2018-08-30",
+    dateOfBirth: "1981-02-14",
+    phone: "+(90) 532 890 12 35",
+    email: "thomas.perez@example.com",
+    department: "Analytics",
+    position: "Senior"
+  },
+  {
+    id: 19,
+    firstName: "Susan",
+    lastName: "Wilson",
+    dateOfEmployment: "2020-06-10",
+    dateOfBirth: "1993-10-05",
+    phone: "+(90) 532 901 23 46",
+    email: "susan.wilson@example.com",
+    department: "Tech",
+    position: "Junior"
+  },
+  {
+    id: 20,
+    firstName: "Christopher",
+    lastName: "Anderson",
+    dateOfEmployment: "2017-03-22",
+    dateOfBirth: "1985-12-20",
+    phone: "+(90) 532 012 34 57",
+    email: "christopher.anderson@example.com",
+    department: "Analytics",
+    position: "Medior"
+  }
+];
