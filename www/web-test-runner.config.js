@@ -6,6 +6,8 @@
 
 import {legacyPlugin} from '@web/dev-server-legacy';
 import {playwrightLauncher} from '@web/test-runner-playwright';
+import {rollupAdapter} from '@web/dev-server-rollup';
+import replace from '@rollup/plugin-replace';
 
 const mode = process.env.MODE || 'dev';
 if (!['dev', 'prod'].includes(mode)) {
@@ -41,7 +43,7 @@ if (!['dev', 'prod'].includes(mode)) {
 //   capabilities: {
 //     'browserstack.user': process.env.BROWSER_STACK_USERNAME,
 //     'browserstack.key': process.env.BROWSER_STACK_ACCESS_KEY,
-//     project: 'my-element',
+//     project: 'home-element',
 //     name: 'unit tests',
 //     build: `${process.env.GITHUB_REF ?? 'local'} build ${
 //       process.env.GITHUB_RUN_NUMBER ?? ''
@@ -99,6 +101,15 @@ export default {
     },
   },
   plugins: [
+    rollupAdapter(
+      // This is required by redux-toolkit
+      replace({
+        'process.env.NODE_ENV': JSON.stringify(
+          mode === 'dev' ? 'development' : 'production'
+        ),
+        preventAssignment: true,
+      })
+    ),
     // Detect browsers without modules (e.g. IE11) and transform to SystemJS
     // (https://modern-web.dev/docs/dev-server/plugins/legacy/).
     legacyPlugin({

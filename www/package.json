@@ -1,5 +1,5 @@
 {
-  "name": "@lit/lit-starter-js",
+  "name": "@kagansari/ing",
   "private": true,
   "version": "2.0.2",
   "description": "ING Employee Management Application Case Study",
@@ -25,7 +25,7 @@
     "serve:prod": "MODE=prod npm run serve",
     "test": "npm run test:dev && npm run test:prod",
     "test:dev": "wtr",
-    "test:watch": "wtr --watch",
+    "test:watch": "BROWSERS=chromium wtr --watch --coverage",
     "test:prod": "MODE=prod wtr",
     "test:prod:watch": "MODE=prod wtr --watch",
     "checksize": "rollup -c ; cat home-element.bundled.js | gzip -9 | wc -c ; rm home-element.bundled.js"
