@@ -1,3 +1,4 @@
 .DS_Store
 .env
 postgres
+dev/nginx/ing.kagansari.com

@@ -1,5 +1,5 @@
-extract:
+extract-localize:
 	npx lit-localize extract
 
-build:
+build-localize:
 	npx lit-localize build
