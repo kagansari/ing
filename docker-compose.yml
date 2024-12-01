@@ -1,0 +1,12 @@
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./dev/nginx/conf.d:/etc/nginx/conf.d
+      - /etc/letsencrypt/live/ing.kagansari.com:/etc/letsencrypt/live/ing.kagansari.com
+      - ./www/build/:/usr/share/nginx/html
+      - ./www/assets/:/usr/share/nginx/assets

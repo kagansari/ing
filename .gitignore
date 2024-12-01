@@ -1,4 +1,3 @@
 .DS_Store
 .env
 postgres
-dev/nginx/conf.d/default.conf
