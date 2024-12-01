@@ -299,7 +299,7 @@ export class EmployeesListElement extends connect(store)(LitElement) {
         @close=${this._handleModalClosed}
       >
         ${msg(
-          str`Selected employee record of"${deletingEmployeeName}" will be deleted`
+          str`Selected employee record of "${deletingEmployeeName}" will be deleted`
         )}
       </confirm-modal>
     `;

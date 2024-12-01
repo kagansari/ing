@@ -102,10 +102,6 @@
   <source>Search...</source>
   <target>Ara...</target>
 </trans-unit>
-<trans-unit id="s48937e152b4d39ec">
-  <source>Selected employee record of"<x id="0" equiv-text="${deletingEmployeeName}"/>" will be deleted</source>
-  <target>Seçilen çalışan kaydı "<x id="0" equiv-text="${deletingEmployeeName}"/>" silinecek</target>
-</trans-unit>
 <trans-unit id="sf1bc83d2509bafcf">
   <source>Phone</source>
   <target>Telefon</target>
@@ -141,6 +137,10 @@
 <trans-unit id="s4caed5b7a7e5d89b">
   <source>English</source>
   <target>İngilizce</target>
+</trans-unit>
+<trans-unit id="s2bf228a74b65ed70">
+  <source>Selected employee record of "<x id="0" equiv-text="${deletingEmployeeName}"/>" will be deleted</source>
+  <target>Seçilen çalışan kaydı "<x id="0" equiv-text="${deletingEmployeeName}"/>" silinecek</target>
 </trans-unit>
 </body>
 </file>
