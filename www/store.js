@@ -54,6 +54,11 @@ const employeesSlice = createSlice({
       saveState({employees: newState});
       return newState;
     },
+    deleteMultipleEmployees: (state, action) => {
+      const newState = state.filter((emp) => !action.payload.includes(emp.id));
+      saveState({employees: newState});
+      return newState;
+    },
   },
 });
 
@@ -69,8 +74,12 @@ const langSlice = createSlice({
   },
 });
 
-export const {addEmployee, updateEmployee, deleteEmployee} =
-  employeesSlice.actions;
+export const {
+  addEmployee,
+  updateEmployee,
+  deleteEmployee,
+  deleteMultipleEmployees,
+} = employeesSlice.actions;
 
 export const {setLang} = langSlice.actions;
 

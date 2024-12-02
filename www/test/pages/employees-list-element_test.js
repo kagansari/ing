@@ -12,7 +12,7 @@ suite('employees-list-element', () => {
       html`<employees-list-element></employees-list-element>`
     );
     const rows = el.shadowRoot.querySelectorAll('table tbody tr');
-    expect(rows.length).to.equal(el.itemsPerPage);
+    expect(rows.length).to.equal(el._itemsPerPage);
   });
 
   test('filters employees based on search query', async () => {

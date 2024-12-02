@@ -11,10 +11,12 @@
     export const templates = {
       's1e2e135dac5ba993': `E-posta Adresi`,
 's1e45a4d7635fbda7': `Bölüm`,
+'s20a149dba1f87860': str`${0} çalışan başarıyla silindi.`,
 's24aadbfb1b1a1a11': `Teknoloji`,
 's268ecd1cef45a9a8': `Emin misiniz?`,
 's2714784162ec459d': `Devam Et`,
 's2888976f54dcceb7': `Sayfa Bulunamadı`,
+'s2a3004de961c312b': `Kayıt bulunamadı`,
 's2bf228a74b65ed70': str`Seçilen çalışan kaydı "${0}" silinecek`,
 's2c2b04f2561a1d4b': `Analitik`,
 's2c57913ffd36d298': `İsim`,
@@ -42,6 +44,8 @@
 'scba00271d50c74f6': `Çalışanlar`,
 'sd1f44f1a8bc20e67': `E-posta`,
 'sd5f8c2c7c1b12882': `E-posta başka bir çalışan tarafından kullanılıyor.`,
+'sdb06f504800b7167': str`${0} kayıt silinecek`,
+'sdc99c86575f35ab6': `kayıt seçildi`,
 'sf1bc83d2509bafcf': `Telefon`,
 'sffa721bb6aa3128d': `Ara...`,
     };

@@ -142,6 +142,22 @@
   <source>Selected employee record of "<x id="0" equiv-text="${deletingEmployeeName}"/>" will be deleted</source>
   <target>Seçilen çalışan kaydı "<x id="0" equiv-text="${deletingEmployeeName}"/>" silinecek</target>
 </trans-unit>
+<trans-unit id="s2a3004de961c312b">
+  <source>No record found</source>
+  <target>Kayıt bulunamadı</target>
+</trans-unit>
+<trans-unit id="sdc99c86575f35ab6">
+  <source>records selected</source>
+  <target>kayıt seçildi</target>
+</trans-unit>
+<trans-unit id="sdb06f504800b7167">
+  <source><x id="0" equiv-text="${this.checkedEmployeeIds.length}"/> records will be deleted</source>
+  <target><x id="0" equiv-text="${this.checkedEmployeeIds.length}"/> kayıt silinecek</target>
+</trans-unit>
+<trans-unit id="s20a149dba1f87860">
+  <source><x id="0" equiv-text="${checkedEmployeeIdsLength}"/> employees deleted successfully.</source>
+  <target><x id="0" equiv-text="${checkedEmployeeIdsLength}"/> çalışan başarıyla silindi.</target>
+</trans-unit>
 </body>
 </file>
 </xliff>

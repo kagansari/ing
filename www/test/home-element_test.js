@@ -17,6 +17,6 @@ suite('home-element', () => {
     const el = await fixture(html`<home-element></home-element>`);
     const listEl = el.shadowRoot.querySelector('employees-list-element');
     const rows = listEl.shadowRoot.querySelectorAll('table tbody tr');
-    expect(rows.length).to.equal(listEl.itemsPerPage);
+    expect(rows.length).to.equal(listEl._itemsPerPage);
   });
 });

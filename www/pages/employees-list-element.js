@@ -10,10 +10,11 @@ import {
   leftIcon,
   listIcon,
   mailIcon,
+  notFoundIcon,
   phoneIcon,
   rightIcon,
 } from '../components/icons.js';
-import store, {deleteEmployee} from '../store';
+import store, {deleteEmployee, deleteMultipleEmployees} from '../store';
 import globalStyles from '../style.js';
 
 export class EmployeesListElement extends connect(store)(LitElement) {
@@ -36,12 +37,18 @@ export class EmployeesListElement extends connect(store)(LitElement) {
           display: flex;
           justify-content: space-between;
           align-items: center;
+          flex-wrap: wrap;
           gap: 16px;
           margin-bottom: 16px;
         }
         .controls h2 {
           font-weight: normal;
           color: var(--ing-orange);
+        }
+        @media (max-width: 768px) {
+          .controls h2 {
+            width: 100%;
+          }
         }
         .controls .list-grid-radio {
           display: flex;
@@ -53,6 +60,7 @@ export class EmployeesListElement extends connect(store)(LitElement) {
           border-radius: 8px;
         }
         table {
+          min-width: 100%;
           background-color: white;
           border-collapse: collapse;
         }
@@ -60,15 +68,19 @@ export class EmployeesListElement extends connect(store)(LitElement) {
           border-bottom: 2px solid var(--grey-bg);
         }
         table th {
+          max-width: 300px;
           color: var(--ing-orange);
           font-size: 14px;
           font-weight: 500;
-          padding: 20px;
+          padding: 20px 12px;
           white-space: nowrap;
           text-align: left;
         }
         table td {
-          padding: 20px;
+          max-width: 300px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          padding: 20px 12px;
           white-space: nowrap;
         }
         table td.light {
@@ -146,7 +158,7 @@ export class EmployeesListElement extends connect(store)(LitElement) {
         .pagination {
           display: flex;
           justify-content: center;
-          margin-top: 16px;
+          margin-top: 32px;
         }
         .pagination .pages button {
           width: 36px;
@@ -158,7 +170,7 @@ export class EmployeesListElement extends connect(store)(LitElement) {
           border-radius: 50%;
           transition: background-color 0.3s ease;
         }
-        .pagination .pages button:hover {
+        .pagination .pages button:not([disabled]):hover {
           background-color: var(--dark-grey-bg);
           cursor: pointer;
         }
@@ -175,9 +187,9 @@ export class EmployeesListElement extends connect(store)(LitElement) {
       employees: {type: Array},
       searchQuery: {type: String},
       currentPage: {type: Number},
-      itemsPerPage: {type: Number},
       displayFormat: {type: String},
       employeeToDelete: {type: Object},
+      checkedEmployeeIds: {type: Array},
     };
   }
 
@@ -187,32 +199,74 @@ export class EmployeesListElement extends connect(store)(LitElement) {
     this.employees = [];
     this.searchQuery = '';
     this.currentPage = 1;
-    this.itemsPerPage = 10;
     this.displayFormat = 'table'; // or 'card'
     this.employeeToDelete = null;
+    this.checkedEmployeeIds = [];
+  }
+
+  get _itemsPerPage() {
+    return this.displayFormat === 'table' ? 10 : 6;
   }
 
   get _pages() {
     const endNumber = Math.ceil(
-      this._filteredEmployees.length / this.itemsPerPage
+      this._filteredEmployees.length / this._itemsPerPage
     );
-    return Array.from({length: endNumber}, (_, i) => i + 1);
+    const pages = Array.from({length: endNumber}, (_, i) => i + 1);
+    const ellipsis = '...';
+    const maxPagesToShow = 5;
+    const currentPage = this.currentPage;
+
+    if (pages.length <= maxPagesToShow) {
+      return pages;
+    }
+
+    const firstPage = pages[0];
+    const lastPage = pages[pages.length - 1];
+    const startPage = Math.max(currentPage - Math.floor(maxPagesToShow / 2), 1);
+    const endPage = Math.min(startPage + maxPagesToShow - 1, endNumber);
+
+    const visiblePages = pages.slice(startPage - 1, endPage);
+
+    if (startPage > 2) {
+      visiblePages.unshift(ellipsis);
+      visiblePages.unshift(firstPage);
+    } else if (startPage === 2) {
+      visiblePages.unshift(firstPage);
+    }
+
+    if (endPage < endNumber - 1) {
+      visiblePages.push(ellipsis);
+      visiblePages.push(lastPage);
+    } else if (endPage === endNumber - 1) {
+      visiblePages.push(lastPage);
+    }
+
+    return visiblePages;
   }
 
   get _filteredEmployees() {
-    return this.employees.filter(
-      (employee) =>
+    return this.employees.filter((employee) => {
+      return (
         employee.firstName
           .toLowerCase()
           .includes(this.searchQuery.toLowerCase()) ||
-        employee.lastName.toLowerCase().includes(this.searchQuery.toLowerCase())
-    );
+        employee.lastName
+          .toLowerCase()
+          .includes(this.searchQuery.toLowerCase()) ||
+        employee.email.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        employee.department
+          .toLowerCase()
+          .includes(this.searchQuery.toLowerCase()) ||
+        employee.position.toLowerCase().includes(this.searchQuery.toLowerCase())
+      );
+    });
   }
 
   get _paginatedEmployees() {
     const paginatedEmployees = this._filteredEmployees.slice(
-      (this.currentPage - 1) * this.itemsPerPage,
-      this.currentPage * this.itemsPerPage
+      (this.currentPage - 1) * this._itemsPerPage,
+      this.currentPage * this._itemsPerPage
     );
 
     return paginatedEmployees;
@@ -228,6 +282,20 @@ export class EmployeesListElement extends connect(store)(LitElement) {
       <div class="container">
         <div class="controls">
           <h2>${msg('Employee List')}</h2>
+          ${this.checkedEmployeeIds?.length > 0
+            ? html`
+                <span>
+                  ${this.checkedEmployeeIds.length} ${msg('records selected')}
+                </span>
+                <button
+                  class="orange"
+                  data-test-id="delete-button"
+                  @click=${() => this._openModal(this.checkedEmployeeIds)}
+                >
+                  ${deleteIcon}
+                </button>
+              `
+            : ''}
           <span class="grow"></span>
           <input
             data-test-id="search-input"
@@ -256,7 +324,14 @@ export class EmployeesListElement extends connect(store)(LitElement) {
           </div>
         </div>
 
-        ${this.displayFormat === 'table'
+        ${this._filteredEmployees.length === 0
+          ? html`
+              <div class="not-found">
+                ${notFoundIcon}
+                <h2>${msg('No record found')}</h2>
+              </div>
+            `
+          : this.displayFormat === 'table'
           ? this._renderTable(this._paginatedEmployees)
           : this._renderCard(this._paginatedEmployees)}
         <div class="pagination">
@@ -270,6 +345,9 @@ export class EmployeesListElement extends connect(store)(LitElement) {
           </button>
           <span class="pages">
             ${this._pages.map((page) => {
+              if (page === '...') {
+                return html`<button disabled>...</button>`;
+              }
               return html`
                 <button
                   class=${page === this.currentPage ? 'active' : ''}
@@ -284,7 +362,7 @@ export class EmployeesListElement extends connect(store)(LitElement) {
             data-test-id="next-page-button"
             class="orange"
             @click=${this._nextPage}
-            ?disabled=${this.currentPage * this.itemsPerPage >=
+            ?disabled=${this.currentPage * this._itemsPerPage >=
             this._filteredEmployees.length}
           >
             ${rightIcon}
@@ -298,10 +376,89 @@ export class EmployeesListElement extends connect(store)(LitElement) {
         @confirm=${this._handleDelete}
         @close=${this._handleModalClosed}
       >
-        ${msg(
-          str`Selected employee record of "${deletingEmployeeName}" will be deleted`
-        )}
+        ${this.checkedEmployeeIds.length > 0
+          ? msg(str`${this.checkedEmployeeIds.length} records will be deleted`)
+          : msg(
+              str`Selected employee record of "${deletingEmployeeName}" will be deleted`
+            )}
       </confirm-modal>
+    `;
+  }
+
+  _renderTable(employees) {
+    const allChecked = this._paginatedEmployees.every((employee) =>
+      this.checkedEmployeeIds.includes(employee.id)
+    );
+
+    return html`
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>
+                <input
+                  type="checkbox"
+                  .checked=${allChecked}
+                  @change=${this._onHeaderCheckboxChange}
+                />
+              </th>
+              <th>${msg('First Name')}</th>
+              <th>${msg('Last Name')}</th>
+              <th class="center">${msg('Date of Employment')}</th>
+              <th class="center">${msg('Date of Birth')}</th>
+              <th class="center">${msg('Phone')}</th>
+              <th class="center">${msg('Email')}</th>
+              <th class="center">${msg('Department')}</th>
+              <th class="center">${msg('Position')}</th>
+              <th class="center">${msg('Actions')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${employees.map(
+              (employee) => html`
+                <tr>
+                  <td>
+                    <input
+                      type="checkbox"
+                      .checked=${this.checkedEmployeeIds.includes(employee.id)}
+                      @change=${(e) => this._onCheckboxChange(e, employee.id)}
+                    />
+                  </td>
+                  <td>${employee.firstName}</td>
+                  <td>${employee.lastName}</td>
+                  <td class="light center">
+                    ${formatDate(employee.dateOfEmployment)}
+                  </td>
+                  <td class="light center">
+                    ${formatDate(employee.dateOfBirth)}
+                  </td>
+                  <td class="light center">${employee.phone}</td>
+                  <td class="light center">${employee.email}</td>
+                  <td class="light center">
+                    ${this._renderEmployeeDepartment(employee.department)}
+                  </td>
+                  <td class="light center">${employee.position}</td>
+                  <td class="center">
+                    <button
+                      class="orange"
+                      @click=${() => this._editEmployee(employee)}
+                    >
+                      ${editIcon}
+                    </button>
+                    <button
+                      class="orange"
+                      data-test-id="delete-button"
+                      @click=${() => this._openModal(employee)}
+                    >
+                      ${deleteIcon}
+                    </button>
+                  </td>
+                </tr>
+              `
+            )}
+          </tbody>
+        </table>
+      </div>
     `;
   }
 
@@ -321,9 +478,13 @@ export class EmployeesListElement extends connect(store)(LitElement) {
                 <div style="display: flex; flex-wrap: nowrap;">
                   <div class="col">
                     <span class="label">${msg('Date of Employment')}</span>
-                    <span class="light">${employee.dateOfEmployment}</span>
+                    <span class="light"
+                      >${formatDate(employee.dateOfEmployment)}</span
+                    >
                     <span class="label">${msg('Date of Birth')}</span>
-                    <span class="light">${employee.dateOfBirth}</span>
+                    <span class="light"
+                      >${formatDate(employee.dateOfBirth)}</span
+                    >
                   </div>
                   <div class="col">
                     <span class="label">${msg('Department')}</span>
@@ -355,67 +516,6 @@ export class EmployeesListElement extends connect(store)(LitElement) {
             </div>
           `
         )}
-      </div>
-    `;
-  }
-
-  _renderTable(employees) {
-    return html`
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>
-                <input type="checkbox" />
-              </th>
-              <th>${msg('First Name')}</th>
-              <th>${msg('Last Name')}</th>
-              <th class="center">${msg('Date of Employment')}</th>
-              <th class="center">${msg('Date of Birth')}</th>
-              <th class="center">${msg('Phone')}</th>
-              <th class="center">${msg('Email')}</th>
-              <th class="center">${msg('Department')}</th>
-              <th class="center">${msg('Position')}</th>
-              <th class="center">${msg('Actions')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${employees.map(
-              (employee) => html`
-                <tr>
-                  <td>
-                    <input type="checkbox" />
-                  </td>
-                  <td>${employee.firstName}</td>
-                  <td>${employee.lastName}</td>
-                  <td class="light center">${employee.dateOfEmployment}</td>
-                  <td class="light center">${employee.dateOfBirth}</td>
-                  <td class="light center">${employee.phone}</td>
-                  <td class="light center">${employee.email}</td>
-                  <td class="light center">
-                    ${this._renderEmployeeDepartment(employee.department)}
-                  </td>
-                  <td class="light center">${employee.position}</td>
-                  <td class="center">
-                    <button
-                      class="orange"
-                      @click=${() => this._editEmployee(employee)}
-                    >
-                      ${editIcon}
-                    </button>
-                    <button
-                      class="orange"
-                      data-test-id="delete-button"
-                      @click=${() => this._openModal(employee)}
-                    >
-                      ${deleteIcon}
-                    </button>
-                  </td>
-                </tr>
-              `
-            )}
-          </tbody>
-        </table>
       </div>
     `;
   }
@@ -468,17 +568,62 @@ export class EmployeesListElement extends connect(store)(LitElement) {
   }
 
   _handleDelete(event) {
-    const employee = event.detail;
-    store.dispatch(deleteEmployee(employee.id));
-    const fullName = `${employee.firstName} ${employee.lastName}`;
-    window
-      .Toastify?.({
-        text: msg(str`Employee "${fullName}" deleted successfully.`),
-        duration: 3000,
-        close: true,
-      })
-      ?.showToast();
+    const checkedEmployeeIdsLength = this.checkedEmployeeIds.length;
+    if (checkedEmployeeIdsLength > 0) {
+      store.dispatch(deleteMultipleEmployees(this.checkedEmployeeIds));
+      this.checkedEmployeeIds = [];
+      window
+        .Toastify?.({
+          text: msg(
+            str`${checkedEmployeeIdsLength} employees deleted successfully.`
+          ),
+          duration: 3000,
+          close: true,
+        })
+        ?.showToast();
+    } else if (this.employeeToDelete) {
+      const employee = event.detail;
+      store.dispatch(deleteEmployee(employee.id));
+      const fullName = `${employee.firstName} ${employee.lastName}`;
+      window
+        .Toastify?.({
+          text: msg(str`Employee "${fullName}" deleted successfully.`),
+          duration: 3000,
+          close: true,
+        })
+        ?.showToast();
+    } else {
+      console.error('No employee to delete');
+    }
+    if (this.currentPage > this._pages.length) {
+      this.currentPage = this._pages.length;
+    }
+  }
+
+  _onCheckboxChange(event, employeeId) {
+    if (event.target.checked) {
+      this.checkedEmployeeIds = [...this.checkedEmployeeIds, employeeId];
+    } else {
+      this.checkedEmployeeIds = this.checkedEmployeeIds.filter(
+        (id) => id !== employeeId
+      );
+    }
+  }
+
+  _onHeaderCheckboxChange(event) {
+    if (event.target.checked) {
+      this.checkedEmployeeIds = this._paginatedEmployees.map(
+        (employee) => employee.id
+      );
+    } else {
+      this.checkedEmployeeIds = [];
+    }
   }
 }
 
 window.customElements.define('employees-list-element', EmployeesListElement);
+
+function formatDate(dateString) {
+  const [year, month, day] = dateString.split('-');
+  return `${day}/${month}/${year}`;
+}
