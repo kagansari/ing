@@ -108,7 +108,7 @@ export class EmployeeEditElement extends connect(store)(LitElement) {
     if (isDuplicate) {
       window
         .Toastify?.({
-          text: 'Email is used by another employee.',
+          text: msg('Email is used by another employee.'),
           duration: 3000,
           close: true,
         })
