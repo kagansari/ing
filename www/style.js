@@ -103,6 +103,24 @@ const globalStyles = css`
     cursor: pointer;
     background-color: var(--ing-dark-blue);
   }
+
+  .not-found {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    padding: 64px 32px;
+    opacity: .5;
+  }
+  .not-found svg {
+    min-width: 150px;
+    min-height: 150px;
+  }
+  .not-found h2 {
+    text-align: center;
+    font-size: 36px;
+    font-weight: normal;
+  }
 `;
 
 const styleSheet = new CSSStyleSheet();

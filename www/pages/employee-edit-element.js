@@ -4,27 +4,32 @@ import {LitElement, css, html} from 'lit';
 import {connect} from 'pwa-helpers';
 import '../components/confirm-modal.js';
 import '../components/employee-form-element.js';
+import {notFoundIcon} from '../components/icons.js';
 import store, {updateEmployee} from '../store.js';
+import globalStyles from '../style.js';
 
 export class EmployeeEditElement extends connect(store)(LitElement) {
   static get styles() {
-    return css`
-      :host {
-        display: block;
-        padding: 16px;
-      }
-      .container {
-        max-width: var(--md-breakpoint);
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      }
-      h2 {
-        font-weight: normal;
-        color: var(--ing-orange);
-      }
-    `;
+    return [
+      globalStyles,
+      css`
+        :host {
+          display: block;
+          padding: 16px;
+        }
+        .container {
+          max-width: var(--md-breakpoint);
+          margin: 0 auto;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+        h2 {
+          font-weight: normal;
+          color: var(--ing-orange);
+        }
+      `,
+    ];
   }
 
   static get properties() {
@@ -58,6 +63,15 @@ export class EmployeeEditElement extends connect(store)(LitElement) {
   }
 
   render() {
+    if (!this._employee) {
+      return html`
+        <div class="not-found">
+          ${notFoundIcon}
+          <h2>${msg('No record found')}</h2>
+        </div>
+      `;
+    }
+
     const fullName = `${this._employee?.firstName} ${this._employee?.lastName}`;
     return html`
       <div class="container">
