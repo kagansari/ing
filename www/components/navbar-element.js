@@ -33,6 +33,11 @@ export class NavbarElement extends connect(store)(LitElement) {
         opacity: 1;
         color: var(--ing-dark-blue);
       }
+      @media (max-width: 768px) {
+        a span.mobile-hidden {
+          display: none;
+        }
+      }
       a.passive {
         opacity: 0.6;
       }
@@ -167,14 +172,16 @@ export class NavbarElement extends connect(store)(LitElement) {
             href="/employees"
             class="${path === '/employees' ? '' : 'passive'}"
           >
-            ${userIcon} ${msg('Employees')}
+            ${userIcon}
+            <span class="mobile-hidden">${msg('Employees')}</span>
           </a>
           <a
             data-test-id="nav-add-new-link"
             href="/employees/new"
             class="${path === '/employees/new' ? '' : 'passive'}"
           >
-            ${addIcon} ${msg('Add New')}
+            ${addIcon}
+            <span class="mobile-hidden">${msg('Add New')}</span>
           </a>
           <div class="language-dropdown">
             <button class="dropbtn">
