@@ -79,6 +79,16 @@ class ConfirmModal extends connect(store)(LitElement) {
     this.employee = null;
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener('keydown', this._handleKeydown.bind(this));
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener('keydown', this._handleKeydown.bind(this));
+  }
+
   render() {
     return html`
       <div class="modal" style="display: ${this.isOpen ? 'block' : 'none'};">
@@ -88,15 +98,21 @@ class ConfirmModal extends connect(store)(LitElement) {
           <p>
             <slot></slot>
           </p>
-          <button type="submit" @click=${this._confirm}>
+          <button type="submit" @click=${this._confirm} tabindex="1">
             ${msg('Proceed')}
           </button>
-          <button class="secondary" @click=${this._closeModal}>
+          <button class="secondary" @click=${this._closeModal} tabindex="2">
             ${msg('Cancel')}
           </button>
         </div>
       </div>
     `;
+  }
+
+  _handleKeydown(event) {
+    if (event.key === 'Escape' && this.isOpen) {
+      this._closeModal();
+    }
   }
 
   _closeModal() {
