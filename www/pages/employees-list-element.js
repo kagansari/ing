@@ -289,7 +289,7 @@ export class EmployeesListElement extends connect(store)(LitElement) {
                 </span>
                 <button
                   class="orange"
-                  data-test-id="delete-button"
+                  data-test-id="delete-multiple-button"
                   @click=${() => this._openModal(this.checkedEmployeeIds)}
                 >
                   ${deleteIcon}

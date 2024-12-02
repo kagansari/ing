@@ -50,4 +50,16 @@ suite.only('employee-edit-element', () => {
       'Employee first name should be updated'
     ).not.to.equal(employeeName);
   });
+
+  test('renders not-found content when employee not found', async () => {
+    const el = await fixture(
+      html`<employee-edit-element
+        employee-id="99999999"
+      ></employee-edit-element>`
+    );
+    await el.updateCompleted;
+
+    const notFoundEl = el.shadowRoot.querySelectorAll('.not-found');
+    expect(notFoundEl).to.exist;
+  });
 });
